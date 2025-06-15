@@ -15,6 +15,7 @@ type FakeUser = {
   direccion: string;
   ultima: string;
   retirosPendientes: boolean;
+  balanceActivo?: number;
 };
 
 function getFakeWithdrawals(user: FakeUser) {
@@ -53,7 +54,9 @@ export function UserDetailModal({ open, onOpenChange, user }: UserDetailModalPro
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-1">
-          <div className="font-bold text-blue-800 mb-2">Balance activo: ${user.gananciasActuales}</div>
+          <div className="font-bold text-blue-800 mb-2">
+            Balance activo: ${typeof user.balanceActivo === "number" ? user.balanceActivo : 0}
+          </div>
           <div><b>Correo: </b> {user.email}</div>
           <div><b>Dirección depósito:</b> {user.direccion}</div>
           <div><b>Referidos:</b> {user.referidos}</div>

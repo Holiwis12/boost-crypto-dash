@@ -8,6 +8,20 @@ import { UserDetailModal } from "@/components/UserDetailModal";
 import { AdminStats } from "@/components/AdminStats";
 import { AdminCharts } from "@/components/AdminCharts";
 
+// Función para calcular el balance activo actual en base a días transcurridos
+function calcularBalanceActivo(invertido: number, ultima: string) {
+  // Se interpreta "ultima" como la fecha del depósito inicial
+  const fechaInicio = new Date(ultima.replace(" ", "T"));
+  const hoy = new Date();
+  const diffDias = Math.floor((+hoy - +fechaInicio) / (1000 * 60 * 60 * 24));
+  // si la fecha es futura, 0 días
+  const dias = diffDias > 0 ? diffDias : 0;
+  // calculo simple: 1.8% diario acumulativo
+  const porcentajeGanado = Math.min(dias * 1.8, 130);
+  // balance activo nunca mayor a 130% del invertido
+  return Math.round((invertido * porcentajeGanado) / 100);
+}
+
 // Datos fake de usuarios administrados
 const fakeUsers = [
   {
@@ -127,6 +141,7 @@ export default function Admin() {
               <TableRow>
                 <TableHead className="text-white">Nombre</TableHead>
                 <TableHead className="text-white">Correo</TableHead>
+                <TableHead className="text-white">Balance activo</TableHead>
                 <TableHead className="text-white">Ganancia actual</TableHead>
                 <TableHead className="text-white">Balance generado</TableHead>
                 <TableHead className="text-white">Inversiones activas</TableHead>
@@ -145,7 +160,8 @@ export default function Admin() {
                 <TableRow key={u.email} className="text-white">
                   <TableCell className="text-white">{u.nombre}</TableCell>
                   <TableCell className="whitespace-nowrap text-white">{u.email}</TableCell>
-                  <TableCell className="text-white font-bold">${u.gananciasActuales}</TableCell>
+                  <TableCell className="text-white font-bold">${calcularBalanceActivo(u.invertido, u.ultima)}</TableCell>
+                  <TableCell className="text-white">${u.gananciasActuales}</TableCell>
                   <TableCell className="text-white">${u.balance}</TableCell>
                   <TableCell className="text-white">${u.inversiones}</TableCell>
                   <TableCell className="text-white">{u.referidos}</TableCell>
@@ -185,7 +201,14 @@ export default function Admin() {
       </Card>
       <UserDetailModal
         open={modalAbierto}
-        user={modalUsuario}
+        user={
+          modalUsuario
+            ? {
+                ...modalUsuario,
+                balanceActivo: calcularBalanceActivo(modalUsuario.invertido, modalUsuario.ultima),
+              }
+            : null
+        }
         onOpenChange={(open: boolean) => {
           setModalAbierto(open);
           if (!open) setModalUsuario(null);
