@@ -56,18 +56,7 @@ export default function Auth() {
     e.preventDefault();
     setLoading(true); setError(null);
     
-    // Primero verificar si el usuario ya existe y está pendiente
-    const { data: existingProfile } = await supabase
-      .from("profiles")
-      .select("status")
-      .eq("email", email)
-      .single();
-
-    if (existingProfile && existingProfile.status === "pending") {
-      setLoading(false);
-      setShowPendingDialog(true);
-      return;
-    }
+    console.log("Iniciando proceso de registro para:", email);
     
     const emailRedirectTo = `${window.location.origin}/bienvenida`;
     const { data, error } = await supabase.auth.signUp({
@@ -83,9 +72,31 @@ export default function Auth() {
       }
     });
     
+    console.log("Resultado del signup:", { data, error });
+    
     if (error) {
+      console.log("Error en signup:", error.message);
+      
+      // Si el error es que el usuario ya existe, verificar si está pendiente
+      if (error.message.includes("already registered") || error.message.includes("User already registered")) {
+        const { data: existingProfile } = await supabase
+          .from("profiles")
+          .select("status")
+          .eq("email", email)
+          .maybeSingle();
+
+        console.log("Perfil existente encontrado:", existingProfile);
+
+        if (existingProfile && existingProfile.status === "pending") {
+          setLoading(false);
+          setShowPendingDialog(true);
+          return;
+        }
+      }
+      
       setError(error.message);
     } else {
+      console.log("Signup exitoso, redirigiendo a bienvenida");
       // Redirigir directamente a bienvenida
       navigate("/bienvenida");
     }
