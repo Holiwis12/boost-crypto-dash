@@ -48,12 +48,14 @@ const Depositar = () => {
       return;
     }
     // Insertar depósito en Supabase
-    const { error } = await supabase.from<any>("deposits").insert({
-      user_id: session.user.id,
-      amount: amt,
-      network: network.name,
-      status: "pending"
-    });
+    const { error } = await supabase
+      .from<any, any>("deposits")
+      .insert({
+        user_id: session.user.id,
+        amount: amt,
+        network: network.name,
+        status: "pending"
+      } as any);
     if (error) {
       setFeedback("Hubo un error al registrar el depósito.");
     } else {

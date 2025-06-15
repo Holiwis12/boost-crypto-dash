@@ -55,8 +55,8 @@ export default function Auth() {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
           await supabase
-            .from<any>("profiles")
-            .update({ email, status: "pending", nombre })
+            .from<any, any>("profiles")
+            .update({ email, status: "pending", nombre } as any)
             .eq("id", session.user.id);
         }
         navigate("/bienvenida");
