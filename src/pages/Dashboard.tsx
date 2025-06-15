@@ -7,29 +7,25 @@ const Dashboard = () => {
   // Demo data para mostrar la estructura
   const user = { nombre: "Usuario", balance: 3200, roi: 1.6, referidos: 7, invertido: 2500 };
 
-  // Mapa conceptual fake de ejemplo (puedes ajustar la estructura después)
+  // Mapa conceptual fake de ejemplo (ajustado: quitado email)
   const referralData: ReferralNode = {
     nombre: "Usuario",
-    email: "usuario@mail.com",
     children: [
       {
         nombre: "Ana Ruiz",
-        email: "ana@midominio.com",
         children: [
-          { nombre: "Jacob Luna", email: "jacob@ejemplo.com" },
-          { nombre: "Laura Lara", email: "laura@mail.com" },
+          { nombre: "Jacob Luna" },
+          { nombre: "Laura Lara" },
         ],
       },
       {
         nombre: "David Páez",
-        email: "david@correo.com",
         children: [
-          { nombre: "Marta Soto", email: "marta@gmail.com" },
+          { nombre: "Marta Soto" },
         ],
       },
       {
         nombre: "Daniel Pérez",
-        email: "daniel@perez.com",
       },
     ],
   };
