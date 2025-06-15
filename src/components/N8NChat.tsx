@@ -46,9 +46,9 @@ export default function N8NChat({ onClose }: N8NChatProps) {
       let agentMsg = "";
       if (response.ok) {
         const data = await response.json();
-        // El backend debe responder con { message: "Texto respuesta" }
-        if (data && data.message) {
-          agentMsg = data.message;
+        // Ahora chequea `message` o `myField`
+        if (data && (data.message || data.myField)) {
+          agentMsg = data.message || data.myField;
         }
       }
 
