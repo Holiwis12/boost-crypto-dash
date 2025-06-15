@@ -20,7 +20,7 @@ export function useProfiles() {
     queryKey: ["profiles"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("profiles")
+        .from<any>("profiles")
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -32,7 +32,7 @@ export function useProfiles() {
   const mutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase
-        .from("profiles")
+        .from<any>("profiles")
         .update({ status })
         .eq("id", id);
       if (error) throw error;

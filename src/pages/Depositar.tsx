@@ -1,4 +1,3 @@
-
 import { PrimaryCTA } from "@/components/PrimaryCTA";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,7 +48,7 @@ const Depositar = () => {
       return;
     }
     // Insertar depósito en Supabase
-    const { error } = await supabase.from("deposits").insert({
+    const { error } = await supabase.from<any>("deposits").insert({
       user_id: session.user.id,
       amount: amt,
       network: network.name,

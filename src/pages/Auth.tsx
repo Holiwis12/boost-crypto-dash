@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -56,7 +55,7 @@ export default function Auth() {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
           await supabase
-            .from("profiles")
+            .from<any>("profiles")
             .update({ email, status: "pending", nombre })
             .eq("id", session.user.id);
         }
