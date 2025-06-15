@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase as typedSupabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -42,24 +43,26 @@ export default function Auth() {
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true); setError(null);
+    
     const emailRedirectTo = `${window.location.origin}/bienvenida`;
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo }
-    });
-    if (error) setError(error.message);
-    else {
-      setTimeout(async () => {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          await supabase
-            .from("profiles")
-            .update({ email, status: "pending", nombre } as any)
-            .eq("id", session.user.id);
+      options: { 
+        emailRedirectTo,
+        data: {
+          nombre: nombre,
+          full_name: nombre,
+          email: email
         }
-        navigate("/bienvenida");
-      }, 2000);
+      }
+    });
+    
+    if (error) {
+      setError(error.message);
+    } else {
+      // Redirigir directamente a bienvenida
+      navigate("/bienvenida");
     }
     setLoading(false);
   }
