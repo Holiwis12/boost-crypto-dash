@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase as typedSupabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { PrimaryCTA } from "@/components/PrimaryCTA";
 
 type Mode = "login" | "signup";
+
+const supabase: any = typedSupabase;
 
 export default function Auth() {
   const [mode, setMode] = useState<Mode>("login");

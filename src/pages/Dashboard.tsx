@@ -1,16 +1,17 @@
-
 import { useEffect, useState } from "react";
 import { BalanceCard } from "@/components/BalanceCard";
 import { PrimaryCTA } from "@/components/PrimaryCTA";
 import { Link, useNavigate } from "react-router-dom";
 import { ReferralTree, ReferralNode } from "@/components/ReferralTree";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase as typedSupabase } from "@/integrations/supabase/client";
 
 const Dashboard = () => {
   // Nuevo: obtener usuario y perfil
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  const supabase: any = typedSupabase;
 
   useEffect(() => {
     async function getProfile() {

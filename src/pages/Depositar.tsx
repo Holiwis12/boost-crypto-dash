@@ -1,7 +1,6 @@
-
 import { PrimaryCTA } from "@/components/PrimaryCTA";
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase as typedSupabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
 const networks = [
@@ -32,6 +31,8 @@ const Depositar = () => {
     checkAuth();
   }, [navigate]);
 
+  const supabase: any = typedSupabase;
+
   async function handleConfirmDeposit(e: React.FormEvent) {
     e.preventDefault();
     setFeedback(null);
@@ -55,7 +56,7 @@ const Depositar = () => {
         amount: amt,
         network: network.name,
         status: "pending"
-      } as any);
+      });
     if (error) {
       setFeedback("Hubo un error al registrar el depósito.");
     } else {

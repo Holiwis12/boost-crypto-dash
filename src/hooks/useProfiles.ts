@@ -1,6 +1,6 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase as typedSupabase } from "@/integrations/supabase/client";
 
 /** Representa el perfil de usuario desde la db */
 export type Profile = {
@@ -11,6 +11,9 @@ export type Profile = {
   status: string;
   created_at: string;
 };
+
+// Cast de supabase a any para evitar error de tipo hasta que se arregle types.ts
+const supabase: any = typedSupabase;
 
 export function useProfiles() {
   const queryClient = useQueryClient();
@@ -33,7 +36,7 @@ export function useProfiles() {
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase
         .from("profiles")
-        .update({ status } as any)
+        .update({ status })
         .eq("id", id);
       if (error) throw error;
     },
