@@ -13,10 +13,23 @@ export default function PostSignup() {
         Ya estás a un paso de multiplicar tus ingresos pasivos.<br />
         <span className="font-semibold text-secondary">Solo falta activar tu cuenta</span> para comenzar a invertir y acceder a nuestras oportunidades exclusivas.
       </p>
-      <div className="bg-secondary/10 border border-secondary px-8 py-6 rounded-lg text-center text-base text-primary mb-2">
-        <b>¿Qué hacer ahora?</b><br />
-        Haz clic en <span className="font-medium text-secondary">"Activar cuenta"</span> para conversar con nuestro asistente.<br />
-        Resuelve tus dudas y asegura tu activación en minutos.
+      <div className="bg-secondary/10 border border-secondary px-8 py-6 rounded-lg text-center text-base text-primary mb-2 flex flex-col gap-3 items-center">
+        <b>¿Qué hacer ahora?</b>
+        <div className="flex items-center justify-center gap-2 flex-wrap">
+          Haz clic en
+          <PrimaryCTA
+            onClick={() => setChatOpen(true)}
+            className="px-4 py-2 !text-base !px-4 !py-2 !my-0"
+            style={{ fontWeight: 700, minWidth: "auto", maxWidth: "none" }}
+            autoFocus={false}
+            tabIndex={0}
+            type="button"
+          >
+            Activar cuenta
+          </PrimaryCTA>
+          para conversar con nuestro asistente.
+        </div>
+        <span>Resuelve tus dudas y asegura tu activación en minutos.</span>
       </div>
       <PrimaryCTA onClick={() => setChatOpen(true)} className="w-full max-w-xs" autoFocus>
         Activar cuenta
@@ -29,3 +42,4 @@ export default function PostSignup() {
     </div>
   );
 }
+
