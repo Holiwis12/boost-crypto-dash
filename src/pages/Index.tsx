@@ -1,6 +1,7 @@
+
 import { PrimaryCTA } from "@/components/PrimaryCTA";
 import { BenefitCard } from "@/components/BenefitCard";
-import { Gift, DollarSign, PlayCircle } from "lucide-react";
+import { Gift, DollarSign, PlayCircle, User } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const benefits = [
@@ -23,6 +24,14 @@ const benefits = [
 
 const Index = () => (
   <div className="flex flex-col min-h-screen bg-background">
+    {/* Botón de login arriba a la derecha */}
+    <div className="absolute top-6 right-6 z-20">
+      <Link to="/auth">
+        <button className="flex items-center justify-center rounded-full bg-secondary/80 hover:bg-secondary transition-colors shadow-lg w-12 h-12">
+          <User size={26} className="text-primary" />
+        </button>
+      </Link>
+    </div>
     <header className="flex flex-col md:flex-row items-center md:justify-between gap-6 py-16 md:py-24 animate-fade-in">
       <div className="flex-1 flex flex-col gap-6">
         <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight max-w-2xl">
@@ -38,9 +47,7 @@ const Index = () => (
           <a href="#como-funciona">
             <PrimaryCTA>¿Cómo funciona?</PrimaryCTA>
           </a>
-          <Link to="/auth">
-            <PrimaryCTA>Iniciar sesión / Registrarme</PrimaryCTA>
-          </Link>
+          {/* Eliminamos el botón de login de aquí */}
         </div>
       </div>
       <div className="flex-1 flex justify-center items-center">
@@ -68,3 +75,4 @@ const Index = () => (
 );
 
 export default Index;
+
