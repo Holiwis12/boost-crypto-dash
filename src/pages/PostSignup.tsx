@@ -15,7 +15,7 @@ export default function PostSignup() {
       </p>
       <div className="bg-secondary/10 border border-secondary px-8 py-6 rounded-lg text-center text-base text-primary mb-2">
         <b>¿Qué hacer ahora?</b><br />
-        Haz clic en <span className="font-medium text-secondary">"Activar cuenta"</span> para realizar tu pago y conversar con nuestro asistente automático.<br/>
+        Haz clic en <span className="font-medium text-secondary">"Activar cuenta"</span> para conversar con nuestro asistente.<br />
         Resuelve tus dudas y asegura tu activación en minutos.
       </div>
       <PrimaryCTA onClick={() => setChatOpen(true)} className="w-full max-w-xs" autoFocus>
