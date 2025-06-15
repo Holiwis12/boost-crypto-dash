@@ -1,11 +1,10 @@
-
 import React, { useState, useRef, useEffect } from "react";
 
 interface N8NChatProps {
   onClose?: () => void;
 }
 
-const N8N_WEBHOOK_URL = "https://n8n.ibpweb.site/webhook/1f53b677-23c8-4a30-b94d-b92c18cef70b/chat";
+const N8N_WEBHOOK_URL = "https://n8n.ibpweb.site/webhook/835f689e-1904-42d7-a62d-55511dee26e1";
 
 interface ChatMessage {
   id: number;
