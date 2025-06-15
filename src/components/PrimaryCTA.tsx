@@ -1,11 +1,10 @@
 
-import { ReactNode } from "react";
+import { ReactNode, ButtonHTMLAttributes } from "react";
 
-interface Props {
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  onClick?: () => void;
-  type?: "button" | "submit";
 }
+
 export function PrimaryCTA({ children, ...rest }: Props) {
   return (
     <button
