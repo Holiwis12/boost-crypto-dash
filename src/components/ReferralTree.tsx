@@ -15,10 +15,9 @@ interface ReferralTreeProps {
 export const ReferralTree: React.FC<ReferralTreeProps> = ({ root }) => {
   // Renderiza de manera recursiva todos los nodos descendientes
   const renderNode = (node: ReferralNode, depth = 0) => (
-    <div className="flex flex-col items-center" style={{marginLeft: depth ? 32 : 0}}>
+    <div className="flex flex-col items-center" style={{ marginLeft: depth ? 32 : 0 }}>
       <div className="flex items-center gap-2 bg-secondary rounded-full px-4 py-2 text-sm font-medium shadow mb-2 min-w-[180px]">
         <span className="text-primary">{node.nombre}</span>
-        <span className="text-xs text-muted-foreground italic">({node.email})</span>
       </div>
       {node.children && node.children.length > 0 && (
         <div className="flex gap-4 mt-2">
