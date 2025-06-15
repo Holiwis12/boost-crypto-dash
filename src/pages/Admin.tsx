@@ -1,9 +1,11 @@
+
 import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Search, Eye, Download } from "lucide-react";
+import { UserDetailModal } from "@/components/UserDetailModal";
 
 // Datos fake de usuarios administrados
 const fakeUsers = [
@@ -11,7 +13,7 @@ const fakeUsers = [
     nombre: "Lucas Pérez",
     email: "lucas.perez@gmail.com",
     balance: 1120,
-    gananciasActuales: 1120, // Nuevo campo para ganancia actual
+    gananciasActuales: 1120,
     inversiones: 1200,
     referidos: 2,
     roi: 1.2,
@@ -68,6 +70,8 @@ const fakeUsers = [
 export default function Admin() {
   const [search, setSearch] = useState("");
   const [filtro, setFiltro] = useState("todos");
+  const [modalUsuario, setModalUsuario] = useState<null | typeof fakeUsers[0]>(null);
+  const [modalAbierto, setModalAbierto] = useState(false);
 
   // Filtro simple fake
   const usuariosFiltrados = fakeUsers.filter((u) => {
@@ -157,6 +161,10 @@ export default function Admin() {
                       variant="outline"
                       size="sm"
                       className="gap-1 border-white text-black hover:bg-secondary hover:text-primary"
+                      onClick={() => {
+                        setModalUsuario(u);
+                        setModalAbierto(true);
+                      }}
                     >
                       <Eye size={16} /> Ver
                     </Button>
@@ -170,6 +178,14 @@ export default function Admin() {
           )}
         </CardContent>
       </Card>
+      <UserDetailModal
+        open={modalAbierto}
+        user={modalUsuario}
+        onOpenChange={(open: boolean) => {
+          setModalAbierto(open);
+          if (!open) setModalUsuario(null);
+        }}
+      />
     </div>
   );
 }
