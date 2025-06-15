@@ -12,6 +12,7 @@ const fakeUsers = [
     nombre: "Lucas Pérez",
     email: "lucas.perez@gmail.com",
     balance: 1120,
+    gananciasActuales: 1120, // Nuevo campo para ganancia actual
     inversiones: 1200,
     referidos: 2,
     roi: 1.2,
@@ -25,6 +26,7 @@ const fakeUsers = [
     nombre: "María Gómez",
     email: "m.gomez@mail.com",
     balance: 3500,
+    gananciasActuales: 3500,
     inversiones: 3550,
     referidos: 6,
     roi: 1.7,
@@ -38,6 +40,7 @@ const fakeUsers = [
     nombre: "Juan Lopez",
     email: "juanlopez99@mail.com",
     balance: 800,
+    gananciasActuales: 800,
     inversiones: 850,
     referidos: 1,
     roi: 1.1,
@@ -51,6 +54,7 @@ const fakeUsers = [
     nombre: "Ana Ruiz",
     email: "anar@dominio.com",
     balance: 9000,
+    gananciasActuales: 9000,
     inversiones: 9500,
     referidos: 9,
     roi: 1.8,
@@ -76,31 +80,31 @@ export default function Admin() {
   });
 
   return (
-    <div className="w-full max-w-7xl mx-auto mt-12 p-6 bg-white rounded-xl shadow-lg animate-fade-in flex flex-col gap-6">
+    <div className="w-full max-w-7xl mx-auto mt-12 p-6 bg-primary rounded-xl shadow-lg animate-fade-in flex flex-col gap-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
-        <h1 className="text-2xl md:text-3xl font-bold">Panel de Administración</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-white">Panel de Administración</h1>
         <div className="flex gap-2">
-          <Button variant="secondary" className="gap-2" size="sm">
+          <Button variant="secondary" className="gap-2">
             <Download size={18} /> Exportar CSV
           </Button>
         </div>
       </div>
 
-      <Card>
+      <Card className="bg-primary border-primary">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">
+          <CardTitle className="text-base text-white">
             <div className="flex gap-2 items-center">
               <Search className="text-secondary" size={20} />
               <Input
                 placeholder="Buscar por correo electrónico..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="max-w-xs"
+                className="max-w-xs bg-primary text-white border-secondary placeholder-gray-300"
               />
               <select
                 value={filtro}
                 onChange={e => setFiltro(e.target.value)}
-                className="ml-2 rounded-md border border-gray-200 px-3 py-2 bg-gray-50 text-gray-800 text-sm"
+                className="ml-2 rounded-md border border-secondary px-3 py-2 bg-primary text-white text-sm"
               >
                 <option value="todos">Todos</option>
                 <option value="menos3referidos">&lt; 3 referidos</option>
@@ -113,33 +117,35 @@ export default function Admin() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Nombre</TableHead>
-                <TableHead>Correo</TableHead>
-                <TableHead>Balance generado</TableHead>
-                <TableHead>Inversiones activas</TableHead>
-                <TableHead>Referidos</TableHead>
-                <TableHead>ROI %</TableHead>
-                <TableHead>Total invertido</TableHead>
-                <TableHead>Total retirado</TableHead>
-                <TableHead>Dirección depósito</TableHead>
-                <TableHead>Última actividad</TableHead>
-                <TableHead>Retiros pendientes</TableHead>
-                <TableHead>Acciones</TableHead>
+                <TableHead className="text-white">Nombre</TableHead>
+                <TableHead className="text-white">Correo</TableHead>
+                <TableHead className="text-white">Ganancia actual</TableHead>
+                <TableHead className="text-white">Balance generado</TableHead>
+                <TableHead className="text-white">Inversiones activas</TableHead>
+                <TableHead className="text-white">Referidos</TableHead>
+                <TableHead className="text-white">ROI %</TableHead>
+                <TableHead className="text-white">Total invertido</TableHead>
+                <TableHead className="text-white">Total retirado</TableHead>
+                <TableHead className="text-white">Dirección depósito</TableHead>
+                <TableHead className="text-white">Última actividad</TableHead>
+                <TableHead className="text-white">Retiros pendientes</TableHead>
+                <TableHead className="text-white">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {usuariosFiltrados.map((u, i) => (
-                <TableRow key={u.email}>
-                  <TableCell>{u.nombre}</TableCell>
-                  <TableCell className="whitespace-nowrap">{u.email}</TableCell>
-                  <TableCell>${u.balance}</TableCell>
-                  <TableCell>${u.inversiones}</TableCell>
-                  <TableCell>{u.referidos}</TableCell>
-                  <TableCell>{u.roi}%</TableCell>
-                  <TableCell>${u.invertido}</TableCell>
-                  <TableCell>${u.retirado}</TableCell>
-                  <TableCell className="whitespace-nowrap">{u.direccion}</TableCell>
-                  <TableCell className="whitespace-nowrap">{u.ultima}</TableCell>
+              {usuariosFiltrados.map((u) => (
+                <TableRow key={u.email} className="text-white">
+                  <TableCell className="text-white">{u.nombre}</TableCell>
+                  <TableCell className="whitespace-nowrap text-white">{u.email}</TableCell>
+                  <TableCell className="text-white font-bold">${u.gananciasActuales}</TableCell>
+                  <TableCell className="text-white">${u.balance}</TableCell>
+                  <TableCell className="text-white">${u.inversiones}</TableCell>
+                  <TableCell className="text-white">{u.referidos}</TableCell>
+                  <TableCell className="text-white">{u.roi}%</TableCell>
+                  <TableCell className="text-white">${u.invertido}</TableCell>
+                  <TableCell className="text-white">${u.retirado}</TableCell>
+                  <TableCell className="whitespace-nowrap text-white">{u.direccion}</TableCell>
+                  <TableCell className="whitespace-nowrap text-white">{u.ultima}</TableCell>
                   <TableCell>
                     {u.retirosPendientes ? (
                       <span className="inline-block bg-warning text-xs text-gray-900 px-2 py-1 rounded">Pendiente</span>
@@ -148,7 +154,7 @@ export default function Admin() {
                     )}
                   </TableCell>
                   <TableCell>
-                    <Button variant="outline" size="sm" className="gap-1">
+                    <Button variant="outline" size="sm" className="gap-1 border-white text-white hover:bg-secondary hover:text-primary">
                       <Eye size={16} /> Ver
                     </Button>
                   </TableCell>
@@ -157,7 +163,7 @@ export default function Admin() {
             </TableBody>
           </Table>
           {usuariosFiltrados.length === 0 && (
-            <div className="text-center text-muted-foreground p-6">No se encontraron usuarios...</div>
+            <div className="text-center text-muted-foreground p-6 text-white">No se encontraron usuarios...</div>
           )}
         </CardContent>
       </Card>
