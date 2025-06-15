@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,18 +9,20 @@ import { UserDetailModal } from "@/components/UserDetailModal";
 import { AdminStats } from "@/components/AdminStats";
 import { AdminCharts } from "@/components/AdminCharts";
 
-// Función para calcular el balance activo actual en base a días transcurridos
-function calcularBalanceActivo(invertido: number, ultima: string) {
-  // Se interpreta "ultima" como la fecha del depósito inicial
+// BALANCE ACTIVO: calcula lo generado acorde a la lógica GoArbit adaptada
+function calcularBalanceActivoGoarbit(invertido: number, referidos: number, ultima: string) {
+  // % diario: 1.1 + (referidos * 0.1), tope 1.8%
+  const porcentajeDiario = Math.min(1.1 + referidos * 0.1, 1.8);
   const fechaInicio = new Date(ultima.replace(" ", "T"));
   const hoy = new Date();
   const diffDias = Math.floor((+hoy - +fechaInicio) / (1000 * 60 * 60 * 24));
-  // si la fecha es futura, 0 días
   const dias = diffDias > 0 ? diffDias : 0;
-  // calculo simple: 1.8% diario acumulativo
-  const porcentajeGanado = Math.min(dias * 1.8, 130);
-  // balance activo nunca mayor a 130% del invertido
-  return Math.round((invertido * porcentajeGanado) / 100);
+  // Ganancia acumulada
+  let ganado = Math.round((invertido * porcentajeDiario * dias) / 100);
+  // Tope de 130% sobre lo invertido
+  const maxGanancia = Math.round(invertido * 1.3);
+  if (ganado > maxGanancia) ganado = maxGanancia;
+  return ganado;
 }
 
 // Datos fake de usuarios administrados
@@ -156,42 +159,45 @@ export default function Admin() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {usuariosFiltrados.map((u) => (
-                <TableRow key={u.email} className="text-white">
-                  <TableCell className="text-white">{u.nombre}</TableCell>
-                  <TableCell className="whitespace-nowrap text-white">{u.email}</TableCell>
-                  <TableCell className="text-white font-bold">${calcularBalanceActivo(u.invertido, u.ultima)}</TableCell>
-                  <TableCell className="text-white">${u.gananciasActuales}</TableCell>
-                  <TableCell className="text-white">${u.balance}</TableCell>
-                  <TableCell className="text-white">${u.inversiones}</TableCell>
-                  <TableCell className="text-white">{u.referidos}</TableCell>
-                  <TableCell className="text-white">{u.roi}%</TableCell>
-                  <TableCell className="text-white">${u.invertido}</TableCell>
-                  <TableCell className="text-white">${u.retirado}</TableCell>
-                  <TableCell className="whitespace-nowrap text-white">{u.direccion}</TableCell>
-                  <TableCell className="whitespace-nowrap text-white">{u.ultima}</TableCell>
-                  <TableCell>
-                    {u.retirosPendientes ? (
-                      <span className="inline-block bg-warning text-xs text-gray-900 px-2 py-1 rounded">Pendiente</span>
-                    ) : (
-                      <span className="inline-block bg-success text-xs text-white px-2 py-1 rounded">OK</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-1 border-white text-black hover:bg-secondary hover:text-primary"
-                      onClick={() => {
-                        setModalUsuario(u);
-                        setModalAbierto(true);
-                      }}
-                    >
-                      <Eye size={16} /> Ver
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {usuariosFiltrados.map((u) => {
+                const balanceActivo = calcularBalanceActivoGoarbit(u.invertido, u.referidos, u.ultima);
+                return (
+                  <TableRow key={u.email} className="text-white">
+                    <TableCell className="text-white">{u.nombre}</TableCell>
+                    <TableCell className="whitespace-nowrap text-white">{u.email}</TableCell>
+                    <TableCell className="text-white font-bold">${balanceActivo}</TableCell>
+                    <TableCell className="text-white">${u.gananciasActuales}</TableCell>
+                    <TableCell className="text-white">${u.balance}</TableCell>
+                    <TableCell className="text-white">${u.inversiones}</TableCell>
+                    <TableCell className="text-white">{u.referidos}</TableCell>
+                    <TableCell className="text-white">{u.roi}%</TableCell>
+                    <TableCell className="text-white">${u.invertido}</TableCell>
+                    <TableCell className="text-white">${u.retirado}</TableCell>
+                    <TableCell className="whitespace-nowrap text-white">{u.direccion}</TableCell>
+                    <TableCell className="whitespace-nowrap text-white">{u.ultima}</TableCell>
+                    <TableCell>
+                      {u.retirosPendientes ? (
+                        <span className="inline-block bg-warning text-xs text-gray-900 px-2 py-1 rounded">Pendiente</span>
+                      ) : (
+                        <span className="inline-block bg-success text-xs text-white px-2 py-1 rounded">OK</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-1 border-white text-black hover:bg-secondary hover:text-primary"
+                        onClick={() => {
+                          setModalUsuario(u);
+                          setModalAbierto(true);
+                        }}
+                      >
+                        <Eye size={16} /> Ver
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
           {usuariosFiltrados.length === 0 && (
@@ -205,7 +211,11 @@ export default function Admin() {
           modalUsuario
             ? {
                 ...modalUsuario,
-                balanceActivo: calcularBalanceActivo(modalUsuario.invertido, modalUsuario.ultima),
+                balanceActivo: calcularBalanceActivoGoarbit(
+                  modalUsuario.invertido,
+                  modalUsuario.referidos,
+                  modalUsuario.ultima
+                ),
               }
             : null
         }
