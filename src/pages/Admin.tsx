@@ -1,142 +1,19 @@
 
-import { useState } from "react";
+import { useProfiles } from "@/hooks/useProfiles";
+import { AdminProfileRow } from "@/components/AdminProfileRow";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { Search, Eye, Download } from "lucide-react";
-import { UserDetailModal } from "@/components/UserDetailModal";
-import { AdminStats } from "@/components/AdminStats";
-import { AdminCharts } from "@/components/AdminCharts";
-
-// BALANCE ACTIVO: calcula lo generado acorde a la lógica GoArbit adaptada
-function calcularBalanceActivoGoarbit(invertido: number, referidos: number, ultima: string) {
-  // % diario: 1.1 + (referidos * 0.1), tope 1.8%
-  const porcentajeDiario = Math.min(1.1 + referidos * 0.1, 1.8);
-  const fechaInicio = new Date(ultima.replace(" ", "T"));
-  const hoy = new Date();
-  const diffDias = Math.floor((+hoy - +fechaInicio) / (1000 * 60 * 60 * 24));
-  const dias = diffDias > 0 ? diffDias : 0;
-  // Ganancia acumulada
-  let ganado = Math.round((invertido * porcentajeDiario * dias) / 100);
-  // Tope de 130% sobre lo invertido
-  const maxGanancia = Math.round(invertido * 1.3);
-  if (ganado > maxGanancia) ganado = maxGanancia;
-  return ganado;
-}
-
-// Datos fake de usuarios administrados
-const fakeUsers = [
-  {
-    nombre: "Lucas Pérez",
-    email: "lucas.perez@gmail.com",
-    balance: 1120,
-    gananciasActuales: 1120,
-    inversiones: 1200,
-    referidos: 2,
-    roi: 1.2,
-    invertido: 1200,
-    retirado: 120,
-    direccion: "TAM7tj...BkXqxo",
-    ultima: "2024-06-13 11:32",
-    retirosPendientes: false,
-  },
-  {
-    nombre: "María Gómez",
-    email: "m.gomez@mail.com",
-    balance: 3500,
-    gananciasActuales: 3500,
-    inversiones: 3550,
-    referidos: 6,
-    roi: 1.7,
-    invertido: 3550,
-    retirado: 400,
-    direccion: "0x76c4...a0ac",
-    ultima: "2024-06-15 08:55",
-    retirosPendientes: true,
-  },
-  {
-    nombre: "Juan Lopez",
-    email: "juanlopez99@mail.com",
-    balance: 800,
-    gananciasActuales: 800,
-    inversiones: 850,
-    referidos: 1,
-    roi: 1.1,
-    invertido: 850,
-    retirado: 50,
-    direccion: "TAM1pp...7Hb6o",
-    ultima: "2024-06-12 21:01",
-    retirosPendientes: false,
-  },
-  {
-    nombre: "Ana Ruiz",
-    email: "anar@dominio.com",
-    balance: 9000,
-    gananciasActuales: 9000,
-    inversiones: 9500,
-    referidos: 9,
-    roi: 1.8,
-    invertido: 9500,
-    retirado: 3000,
-    direccion: "0xa59f...ac5f",
-    ultima: "2024-06-15 10:21",
-    retirosPendientes: false,
-  },
-];
+import { Table, TableHeader, TableBody, TableRow, TableHead } from "@/components/ui/table";
+import { toast } from "@/components/ui/use-toast";
 
 export default function Admin() {
-  const [search, setSearch] = useState("");
-  const [filtro, setFiltro] = useState("todos");
-  const [modalUsuario, setModalUsuario] = useState<null | typeof fakeUsers[0]>(null);
-  const [modalAbierto, setModalAbierto] = useState(false);
-
-  // Filtro simple fake
-  const usuariosFiltrados = fakeUsers.filter((u) => {
-    let match = true;
-    if (search.trim()) match = u.email.toLowerCase().includes(search.toLowerCase());
-    if (filtro === "menos3referidos") match = match && u.referidos < 3;
-    if (filtro === "retirosPendientes") match = match && u.retirosPendientes;
-    return match;
-  });
+  const { profiles, isLoading, error, updateStatus, updatingStatus } = useProfiles();
 
   return (
-    <div className="w-full max-w-7xl mx-auto mt-12 p-6 bg-primary rounded-xl shadow-lg animate-fade-in flex flex-col gap-6">
-      {/* Métricas principales */}
-      <AdminStats users={fakeUsers} />
-      {/* Gráficas */}
-      <AdminCharts users={fakeUsers} />
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
-        <h1 className="text-2xl md:text-3xl font-bold text-white">Panel de Administración</h1>
-        <div className="flex gap-2">
-          <Button variant="secondary" className="gap-2">
-            <Download size={18} /> Exportar CSV
-          </Button>
-        </div>
-      </div>
-
-      <Card className="bg-primary border-primary">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base text-white">
-            <div className="flex gap-2 items-center">
-              <Search className="text-secondary" size={20} />
-              <Input
-                placeholder="Buscar por correo electrónico..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="max-w-xs bg-primary text-white border-secondary placeholder-gray-300"
-              />
-              <select
-                value={filtro}
-                onChange={e => setFiltro(e.target.value)}
-                className="ml-2 rounded-md border border-secondary px-3 py-2 bg-primary text-white text-sm"
-              >
-                <option value="todos">Todos</option>
-                <option value="menos3referidos">&lt; 3 referidos</option>
-                <option value="retirosPendientes">Con retiros pendientes</option>
-              </select>
-            </div>
-          </CardTitle>
+    <div className="w-full max-w-4xl mx-auto mt-10 p-6 bg-primary rounded-xl shadow-lg animate-fade-in flex flex-col gap-6">
+      <h1 className="text-2xl font-bold text-white mb-4">Panel de Administración</h1>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg text-primary">Perfiles de usuarios</CardTitle>
         </CardHeader>
         <CardContent className="p-0 overflow-x-auto">
           <Table>
@@ -144,86 +21,54 @@ export default function Admin() {
               <TableRow>
                 <TableHead className="text-white">Nombre</TableHead>
                 <TableHead className="text-white">Correo</TableHead>
-                <TableHead className="text-white">Balance activo</TableHead>
-                <TableHead className="text-white">Ganancia actual</TableHead>
-                <TableHead className="text-white">Balance generado</TableHead>
-                <TableHead className="text-white">Inversiones activas</TableHead>
-                <TableHead className="text-white">Referidos</TableHead>
-                <TableHead className="text-white">ROI %</TableHead>
-                <TableHead className="text-white">Total invertido</TableHead>
-                <TableHead className="text-white">Total retirado</TableHead>
-                <TableHead className="text-white">Dirección depósito</TableHead>
-                <TableHead className="text-white">Última actividad</TableHead>
-                <TableHead className="text-white">Retiros pendientes</TableHead>
+                <TableHead className="text-white">Balance</TableHead>
+                <TableHead className="text-white">Estado</TableHead>
+                <TableHead className="text-white">Registrado</TableHead>
                 <TableHead className="text-white">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {usuariosFiltrados.map((u) => {
-                const balanceActivo = calcularBalanceActivoGoarbit(u.invertido, u.referidos, u.ultima);
-                return (
-                  <TableRow key={u.email} className="text-white">
-                    <TableCell className="text-white">{u.nombre}</TableCell>
-                    <TableCell className="whitespace-nowrap text-white">{u.email}</TableCell>
-                    <TableCell className="text-white font-bold">${balanceActivo}</TableCell>
-                    <TableCell className="text-white">${u.gananciasActuales}</TableCell>
-                    <TableCell className="text-white">${u.balance}</TableCell>
-                    <TableCell className="text-white">${u.inversiones}</TableCell>
-                    <TableCell className="text-white">{u.referidos}</TableCell>
-                    <TableCell className="text-white">{u.roi}%</TableCell>
-                    <TableCell className="text-white">${u.invertido}</TableCell>
-                    <TableCell className="text-white">${u.retirado}</TableCell>
-                    <TableCell className="whitespace-nowrap text-white">{u.direccion}</TableCell>
-                    <TableCell className="whitespace-nowrap text-white">{u.ultima}</TableCell>
-                    <TableCell>
-                      {u.retirosPendientes ? (
-                        <span className="inline-block bg-warning text-xs text-gray-900 px-2 py-1 rounded">Pendiente</span>
-                      ) : (
-                        <span className="inline-block bg-success text-xs text-white px-2 py-1 rounded">OK</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="gap-1 border-white text-black hover:bg-secondary hover:text-primary"
-                        onClick={() => {
-                          setModalUsuario(u);
-                          setModalAbierto(true);
-                        }}
-                      >
-                        <Eye size={16} /> Ver
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+              {isLoading && (
+                <tr>
+                  <td colSpan={6} className="text-center text-muted-foreground p-6">Cargando perfiles...</td>
+                </tr>
+              )}
+              {error && (
+                <tr>
+                  <td colSpan={6} className="text-center text-red-400 p-6">Error: {String(error.message)}</td>
+                </tr>
+              )}
+              {!isLoading && profiles && profiles.length > 0 && (
+                profiles.map(profile => (
+                  <AdminProfileRow
+                    key={profile.id}
+                    profile={profile}
+                    updating={updatingStatus}
+                    onStatusChange={status => {
+                      updateStatus(
+                        { id: profile.id, status },
+                        {
+                          onSuccess: () => {
+                            toast({ title: "Éxito", description: `Usuario ${status === "approved" ? "aprobado" : "rechazado"} exitosamente`, variant: "default" });
+                          },
+                          onError: (e: any) => {
+                            toast({ title: "Error", description: e.message, variant: "destructive" });
+                          },
+                        }
+                      );
+                    }}
+                  />
+                ))
+              )}
+              {!isLoading && profiles && profiles.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="text-center text-muted-foreground p-6">No hay perfiles registrados.</td>
+                </tr>
+              )}
             </TableBody>
           </Table>
-          {usuariosFiltrados.length === 0 && (
-            <div className="text-center text-muted-foreground p-6 text-white">No se encontraron usuarios...</div>
-          )}
         </CardContent>
       </Card>
-      <UserDetailModal
-        open={modalAbierto}
-        user={
-          modalUsuario
-            ? {
-                ...modalUsuario,
-                balanceActivo: calcularBalanceActivoGoarbit(
-                  modalUsuario.invertido,
-                  modalUsuario.referidos,
-                  modalUsuario.ultima
-                ),
-              }
-            : null
-        }
-        onOpenChange={(open: boolean) => {
-          setModalAbierto(open);
-          if (!open) setModalUsuario(null);
-        }}
-      />
     </div>
   );
 }
