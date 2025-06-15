@@ -10,6 +10,7 @@ export default function Auth() {
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nombre, setNombre] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [session, setSession] = useState<any>(null);
@@ -41,9 +42,27 @@ export default function Auth() {
     e.preventDefault();
     setLoading(true); setError(null);
     // CRÍTICO: Redirigir después de validar email (si está habilitado)
-    const emailRedirectTo = `${window.location.origin}/dashboard`;
-    const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo } });
+    const emailRedirectTo = `${window.location.origin}/bienvenida`;
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo }
+    });
     if (error) setError(error.message);
+    else {
+      // Guardar el nombre en perfiles (cuando ya esté creado el perfil, lo actualizas)
+      // Esperar unos segundos a que se cree el perfil
+      setTimeout(async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          await supabase
+            .from("profiles")
+            .update({ email, status: "pending", nombre })
+            .eq("id", session.user.id);
+        }
+        navigate("/bienvenida");
+      }, 2000);
+    }
     setLoading(false);
     // Supabase envía email de confirmación si está activado
   }
@@ -52,6 +71,16 @@ export default function Auth() {
     <div className="w-full max-w-md mx-auto mt-16 bg-white rounded-xl shadow-xl p-10 flex flex-col gap-6 animate-fade-in">
       <h1 className="text-2xl font-bold">{mode === "login" ? "Iniciar sesión" : "Crear cuenta"}</h1>
       <form onSubmit={mode === "login" ? handleLogin : handleSignup} className="flex flex-col gap-4">
+        {mode === "signup" && (
+          <input
+            type="text"
+            placeholder="Nombre completo"
+            value={nombre}
+            onChange={e => setNombre(e.target.value)}
+            className="border border-primary rounded px-4 py-2 w-full"
+            required
+          />
+        )}
         <input
           type="email"
           placeholder="Correo electrónico"

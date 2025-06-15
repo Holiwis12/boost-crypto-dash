@@ -1,6 +1,6 @@
 
 import { PrimaryCTA } from "@/components/PrimaryCTA";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
@@ -21,6 +21,17 @@ const Depositar = () => {
   const [success, setSuccess] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Solo usuarios logueados pueden entrar
+    async function checkAuth() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth");
+      }
+    }
+    checkAuth();
+  }, [navigate]);
 
   async function handleConfirmDeposit(e: React.FormEvent) {
     e.preventDefault();
