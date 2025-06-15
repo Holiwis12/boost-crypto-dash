@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Search, Eye, Download } from "lucide-react";
 import { UserDetailModal } from "@/components/UserDetailModal";
+import { AdminStats } from "@/components/AdminStats";
+import { AdminCharts } from "@/components/AdminCharts";
 
 // Datos fake de usuarios administrados
 const fakeUsers = [
@@ -84,6 +85,10 @@ export default function Admin() {
 
   return (
     <div className="w-full max-w-7xl mx-auto mt-12 p-6 bg-primary rounded-xl shadow-lg animate-fade-in flex flex-col gap-6">
+      {/* Métricas principales */}
+      <AdminStats users={fakeUsers} />
+      {/* Gráficas */}
+      <AdminCharts users={fakeUsers} />
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
         <h1 className="text-2xl md:text-3xl font-bold text-white">Panel de Administración</h1>
         <div className="flex gap-2">

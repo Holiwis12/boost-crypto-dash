@@ -15,17 +15,14 @@ type FakeUser = {
   direccion: string;
   ultima: string;
   retirosPendientes: boolean;
-  // Puedes agregar más campos si tuvieran más detalle
 };
 
-// Retiros simulados para el ejemplo
 function getFakeWithdrawals(user: FakeUser) {
-  // Por simplicidad, realizamos "retiros" usando el campo retirado y asumimos retiros de montos fijos
   const retiros: { fecha: string; monto: number }[] = [];
   let total = user.retirado;
   let idx = 0;
   while (total > 0) {
-    const monto = Math.min(100, total); // Supón retiros de máximo 100
+    const monto = Math.min(100, total);
     retiros.push({
       fecha: `2024-06-${12 + idx} ${(10 + idx).toString().padStart(2, "0")}:00`,
       monto,
@@ -56,13 +53,13 @@ export function UserDetailModal({ open, onOpenChange, user }: UserDetailModalPro
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-1">
+          <div className="font-bold text-blue-800 mb-2">Balance activo: ${user.gananciasActuales}</div>
           <div><b>Correo: </b> {user.email}</div>
           <div><b>Dirección depósito:</b> {user.direccion}</div>
           <div><b>Referidos:</b> {user.referidos}</div>
           <div><b>ROI:</b> {user.roi}%</div>
           <div><b>Total invertido:</b> ${user.invertido}</div>
           <div><b>Total retirado:</b> ${user.retirado}</div>
-          <div><b>Ganancia actual:</b> ${user.gananciasActuales}</div>
         </div>
 
         <div className="mt-6">
