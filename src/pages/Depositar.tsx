@@ -1,3 +1,4 @@
+
 import { PrimaryCTA } from "@/components/PrimaryCTA";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,7 +23,6 @@ const Depositar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Solo usuarios logueados pueden entrar
     async function checkAuth() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -49,7 +49,7 @@ const Depositar = () => {
     }
     // Insertar depósito en Supabase
     const { error } = await supabase
-      .from<any, any>("deposits")
+      .from("deposits")
       .insert({
         user_id: session.user.id,
         amount: amt,

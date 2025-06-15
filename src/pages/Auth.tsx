@@ -40,7 +40,6 @@ export default function Auth() {
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true); setError(null);
-    // CRÍTICO: Redirigir después de validar email (si está habilitado)
     const emailRedirectTo = `${window.location.origin}/bienvenida`;
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -49,21 +48,18 @@ export default function Auth() {
     });
     if (error) setError(error.message);
     else {
-      // Guardar el nombre en perfiles (cuando ya esté creado el perfil, lo actualizas)
-      // Esperar unos segundos a que se cree el perfil
       setTimeout(async () => {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
           await supabase
-            .from<any, any>("profiles")
-            .update({ email, status: "pending", nombre } as any)
+            .from("profiles")
+            .update({ email, status: "pending", nombre })
             .eq("id", session.user.id);
         }
         navigate("/bienvenida");
       }, 2000);
     }
     setLoading(false);
-    // Supabase envía email de confirmación si está activado
   }
 
   return (
