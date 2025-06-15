@@ -49,7 +49,7 @@ const Depositar = () => {
     }
     // Insertar depósito en Supabase
     const { error } = await supabase
-      .from("deposits")
+      .from<any, any>("deposits")
       .insert({
         user_id: session.user.id,
         amount: amt,
