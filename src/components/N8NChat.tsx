@@ -39,12 +39,30 @@ export default function N8NChat({ onClose }: N8NChatProps) {
     setMessages((prev) => [...prev, message]);
 
     try {
-      await fetch(N8N_WEBHOOK_URL, {
+      const response = await fetch(N8N_WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: input.trim() }),
       });
-      // Solo mostramos los mensajes enviados, no respuesta
+      let agentMsg = "";
+      if (response.ok) {
+        const data = await response.json();
+        // El backend debe responder con { message: "Texto respuesta" }
+        if (data && data.message) {
+          agentMsg = data.message;
+        }
+      }
+
+      if (agentMsg) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + Math.random(),
+            text: agentMsg,
+            sent: false,
+          },
+        ]);
+      }
     } catch (error) {
       setMessages((prev) => [
         ...prev,
