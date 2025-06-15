@@ -20,11 +20,11 @@ export function useProfiles() {
     queryKey: ["profiles"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from<any, Profile>("profiles")
+        .from("profiles")
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data as Profile[]) || [];
+      return (data ?? []) as Profile[]; // force type for compatibility
     },
   });
 
@@ -32,7 +32,7 @@ export function useProfiles() {
   const mutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase
-        .from<any, Profile>("profiles")
+        .from("profiles")
         .update({ status } as any)
         .eq("id", id);
       if (error) throw error;

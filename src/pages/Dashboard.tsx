@@ -21,7 +21,7 @@ const Dashboard = () => {
       }
       // Buscar perfil en la base
       const { data, error } = await supabase
-        .from<any, any>("profiles")
+        .from("profiles")
         .select("*")
         .eq("id", session.user.id)
         .maybeSingle();
