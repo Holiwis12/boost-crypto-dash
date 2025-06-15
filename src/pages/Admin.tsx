@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -154,7 +153,11 @@ export default function Admin() {
                     )}
                   </TableCell>
                   <TableCell>
-                    <Button variant="outline" size="sm" className="gap-1 border-white text-white hover:bg-secondary hover:text-primary">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1 border-white text-black hover:bg-secondary hover:text-primary"
+                    >
                       <Eye size={16} /> Ver
                     </Button>
                   </TableCell>
