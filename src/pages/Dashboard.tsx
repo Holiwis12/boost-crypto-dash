@@ -1,42 +1,38 @@
-import { useEffect, useState } from "react";
+
+import { useAuth } from "@/hooks/useAuth";
 import { BalanceCard } from "@/components/BalanceCard";
 import { PrimaryCTA } from "@/components/PrimaryCTA";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ReferralTree, ReferralNode } from "@/components/ReferralTree";
-import { supabase as typedSupabase } from "@/integrations/supabase/client";
 
 const Dashboard = () => {
-  // Nuevo: obtener usuario y perfil
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const { profile, loading, isApproved } = useAuth();
 
-  const supabase: any = typedSupabase;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Cargando...</div>
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    async function getProfile() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/auth");
-        return;
-      }
-      // Buscar perfil en la base
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .maybeSingle();
-      if (!data || error) {
-        setProfile(null);
-      } else {
-        setProfile(data);
-      }
-      setLoading(false);
-    }
-    getProfile();
-  }, [navigate]);
+  if (!isApproved) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="bg-white rounded-xl shadow-xl p-10 text-center max-w-md">
+          <h2 className="text-2xl font-bold text-secondary mb-4">Cuenta Pendiente</h2>
+          <p className="text-gray-600 mb-6">
+            Tu cuenta está pendiente de aprobación. Un administrador debe aprobar tu cuenta antes de que puedas acceder al panel de inversión.
+          </p>
+          <p className="text-sm text-gray-500">
+            Por favor, espera a que se valide tu pago de inversión inicial.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-  // Mapa conceptual estático como antes
+  // Mapa conceptual estático
   const referralData: ReferralNode = {
     nombre: profile?.email ?? "Usuario",
     children: [
@@ -45,9 +41,6 @@ const Dashboard = () => {
       { nombre: "Daniel Pérez" },
     ]
   };
-
-  if (loading) return <div className="p-10 text-lg">Cargando...</div>;
-  if (!profile) return <div className="p-10 text-red-700">No hay perfil</div>;
 
   return (
     <div className="w-full py-10 px-6 flex flex-col gap-8 animate-fade-in">
