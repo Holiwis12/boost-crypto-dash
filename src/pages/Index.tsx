@@ -1,4 +1,3 @@
-
 import { PrimaryCTA } from "@/components/PrimaryCTA";
 import { BenefitCard } from "@/components/BenefitCard";
 import { Gift, DollarSign, PlayCircle } from "lucide-react";
@@ -39,6 +38,9 @@ const Index = () => (
           <a href="#como-funciona">
             <PrimaryCTA>¿Cómo funciona?</PrimaryCTA>
           </a>
+          <Link to="/auth">
+            <PrimaryCTA>Iniciar sesión / Registrarme</PrimaryCTA>
+          </Link>
         </div>
       </div>
       <div className="flex-1 flex justify-center items-center">

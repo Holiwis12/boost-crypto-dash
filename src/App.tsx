@@ -13,6 +13,7 @@ import Juego from "./pages/Juego";
 import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
+import Auth from "./pages/Auth";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           <main className="flex-1 min-h-screen">
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/depositar" element={<Depositar />} />
               <Route path="/retirar" element={<Retirar />} />
