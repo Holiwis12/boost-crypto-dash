@@ -3,16 +3,41 @@ import { useAuth } from "@/hooks/useAuth";
 import { PrimaryCTA } from "@/components/PrimaryCTA";
 import { supabase as typedSupabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import N8NChat from "@/components/N8NChat";
 
 const supabase: any = typedSupabase;
 
 export default function PostSignup() {
-  const { profile, loading, isApproved } = useAuth();
+  const { profile, loading, isApproved, session } = useAuth();
   const navigate = useNavigate();
+  const [showChat, setShowChat] = useState(false);
+
+  // Obtener información del usuario desde la sesión si el profile no está disponible
+  const userEmail = profile?.email || session?.user?.email || '';
+  const userName = profile?.nombre || session?.user?.user_metadata?.nombre || session?.user?.user_metadata?.full_name || '';
+
+  console.log("PostSignup - Profile:", profile);
+  console.log("PostSignup - Session:", session);
+  console.log("PostSignup - User email:", userEmail);
+  console.log("PostSignup - User name:", userName);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate("/auth");
+  };
+
+  const handleActivateAccount = () => {
+    setShowChat(true);
   };
 
   if (loading) {
@@ -47,21 +72,46 @@ export default function PostSignup() {
         
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <h3 className="font-semibold text-blue-800 mb-2">Información de tu cuenta:</h3>
-          <p className="text-blue-700"><strong>Email:</strong> {profile?.email}</p>
-          <p className="text-blue-700"><strong>Nombre:</strong> {profile?.nombre}</p>
+          <p className="text-blue-700"><strong>Email:</strong> {userEmail}</p>
+          <p className="text-blue-700"><strong>Nombre:</strong> {userName}</p>
           <p className="text-blue-700"><strong>Estado:</strong> <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded">Pendiente</span></p>
         </div>
 
-        <p className="text-gray-600 mb-6">
-          Recibirás una notificación una vez que tu cuenta sea aprobada y puedas comenzar a invertir.
-        </p>
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+          <p className="text-green-700 mb-4">
+            Para continuar con tu cuenta y poder invertir debes activar tu cuenta, por favor haz click en el siguiente botón.
+          </p>
+        </div>
 
         <div className="flex gap-4 justify-center">
+          <PrimaryCTA onClick={handleActivateAccount}>
+            Activar Cuenta
+          </PrimaryCTA>
           <PrimaryCTA onClick={handleSignOut}>
             Cerrar sesión
           </PrimaryCTA>
         </div>
       </div>
+
+      {/* Chat para activar cuenta */}
+      {showChat && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-secondary">Activar cuenta</h2>
+              <button 
+                onClick={() => setShowChat(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <N8NChat onClose={() => setShowChat(false)} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
